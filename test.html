@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML RNG!</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f4f4f9;
+        color: #333;
+    }
+
+    h1 {
+        font-size: 36px;
+        margin-top: 30px;
+        color: #333;
+    }
+
+    button {
+        font-size: 18px;
+        padding: 10px 20px;
+        margin: 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: #28a745;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #218838;
+    }
+
+    .number {
+        font-size: 32px;
+        margin: 20px auto;
+        display: block;
+        padding: 10px 15px;
+        background-color: #018f1f;
+        color: #fff;
+        border: 2px solid black;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s, color 0.3s;
+        animation: none;
+    }
+
+    .number:hover {
+        background-color: #6eb300;
+        color: #fff;
+    }
+
+    .rollAnimation {
+        animation: bounce 0.5s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        25%, 75% { transform: translateY(-5px); }
+        50% { transform: translateY(0); }
+    }
+
+    #history {
+        margin-top: 20px;
+        font-size: 18px;
+        text-align: center;
+        padding: 10px;
+        border: 2px solid black;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        margin: 20px auto;
+    }
+
+    #history div {
+        margin-bottom: 5px;
+        padding: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    #history div:hover {
+        background-color: #f0f0f0;
+    }
+
+    .delete-button {
+        margin-left: 10px;
+        padding: 2px 5px;
+        background-color: #ff6666;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    #cutscene {
+        z-index: 9999999;
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        z-index: 9999;
+    }
+
+    #customImage {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 200px;
+        height: 200px;
+        background-image: url('https://cdn.discordapp.com/attachments/1239684068828905494/1242180425472933981/ss.jpg?ex=665620ac&is=6654cf2c&hm=cc8a623864e75dd1d1fead8df4ec77c3026a0a77ae800479e4859d595106036c&');
+        background-size: cover;
+        animation: spin 3s linear infinite, scaleUp 3s linear forwards;
+    }
+
+    @keyframes spin {
+        from { transform: translate(-50%, -50%) rotate(0deg); }
+        to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    @keyframes scaleUp {
+        from { width: 50px; height: 50px; opacity: 1; }
+        to { width: 200px; height: 200px; opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+
+    @keyframes rainbow {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    .rainbow {
+        background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet);
+        background-size: 400% 400%;
+        animation: rainbow 5s ease infinite;
+        color: transparent;
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
+
+    /* Glitch effect */
+    @keyframes glitch {
+        0% { transform: translateX(0); }
+        5% { transform: translateX(3px) skew(0.5deg); }
+        10% { transform: translateX(-3px) skew(-0.5deg); }
+        15% { transform: translateX(2px) skew(1deg); }
+        20% { transform: translateX(-2px)
+            skew(-1deg); }
+    25% { transform: translateX(1px) skew(-0.5deg); }
+    30% { transform: translateX(-1px) skew(0.5deg); }
+    35% { transform: translateX(3px) skew(-1deg); }
+    40% { transform: translateX(-3px) skew(1deg); }
+    45% { transform: translateX(2px) skew(-0.5deg); }
+    50% { transform: translateX(-2px) skew(0.5deg); }
+    55% { transform: translateX(1px) skew(1deg); }
+    60% { transform: translateX(-1px) skew(-1deg); }
+    65% { transform: translateX(3px) skew(0.5deg); }
+    70% { transform: translateX(-3px) skew(-0.5deg); }
+    75% { transform: translateX(2px) skew(1deg); }
+    80% { transform: translateX(-2px) skew(-1deg); }
+    85% { transform: translateX(1px) skew(-0.5deg); }
+    90% { transform: translateX(-1px) skew(0.5deg); }
+    95% { transform: translateX(3px) skew(-1deg); }
+    100% { transform: translateX(-3px) skew(1deg); }
+}
+
+.glitch-effect {
+    animation: glitch 0.5s infinite;
+}
+
+.bigger-ui {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+.bigger-ui-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+</style>
+</head>
+<body>
+    <h1>HTML RNG! Goal: Get a number over 1 million</h1>
+    <button onclick="generateNumber()">Generate Number</button>
+    <div id="number" class="number"></div>
+    <div id="rolls">Total Rolls: 0</div>
+    <div id="history"></div>
+
+    <div id="cutscene">
+        <div id="customImage"></div>
+    </div>
+
+    <div class="bigger-ui" onclick="closeBiggerUI()">
+        <div class="bigger-ui-content" id="biggerUIContent">
+            <h2 id="bigNumber"></h2>
+            <p id="bigDescription"></p>
+        </div>
+    </div>
+
+    <script>
+        var rolledNumbers = JSON.parse(localStorage.getItem('rolledNumbers')) || {};
+        var totalRolls = parseInt(localStorage.getItem('totalRolls')) || 0;
+        var cutscenePlaying = false;
+
+        document.getElementById("rolls").textContent = "Total Rolls: " + totalRolls.toLocaleString();
+        updateHistory();
+
+        function generateNumber() {
+            totalRolls++;
+            document.getElementById("rolls").textContent = "Total Rolls: " + totalRolls.toLocaleString();
+            localStorage.setItem('totalRolls', totalRolls);
+
+            var maxNumber = 1000000000;
+            var intervalTime = 150;
+            var rollCount = 20;
+
+            var rollInterval;
+
+            var numberElement = document.getElementById("number");
+            numberElement.classList.remove("rollAnimation");
+
+            rollInterval = setInterval(roll, intervalTime);
+            numberElement.classList.add("rollAnimation");
+
+            function roll() {
+                var randomValue = Math.random();
+                var tempProbability = 0.5;
+                var tempNumber = calculateNumber(tempProbability, maxNumber);
+
+                numberElement.textContent = tempNumber.toLocaleString();
+                numberElement.classList.remove("number-" + (rollCount % 10));
+                numberElement.classList.add("number-" + (tempNumber % 10));
+                rollCount--;
+
+                if (rollCount === 0) {
+                    clearInterval(rollInterval);
+                    numberElement.classList.remove("rollAnimation");
+
+                    if (rolledNumbers[tempNumber]) {
+                        rolledNumbers[tempNumber]++;
+                    } else {
+                        rolledNumbers[tempNumber] = 1;
+                    }
+
+                    localStorage.setItem('rolledNumbers', JSON.stringify(rolledNumbers));
+                    updateHistory();
+
+                    if (tempNumber >= 1000000 && !cutscenePlaying) {
+                        playCutscene();
+                    }
+                }
+            }
+        }
+
+        function calculateNumber(probability, maxNumber) {
+            var randomValue = Math.random();
+            var tempProbability = probability;
+            var tempNumber = 0;
+
+            for (var i = 2; i <= maxNumber; i *= 2) {
+                if (randomValue <= tempProbability) {
+                    tempNumber = i;
+                    break;
+                } else {
+                    randomValue = Math.random();
+                    tempProbability /= 2;
+                }
+            }
+
+            return tempNumber;
+        }
+
+        function updateHistory() {
+            var historyElement = document.getElementById("history");
+            historyElement.innerHTML = "<h2>Roll History</h2>";
+
+            var sortedNumbers = Object.keys(rolledNumbers).sort((a, b) => a - b);
+
+            sortedNumbers.forEach(number => {
+                var count = rolledNumbers[number];
+                var numberText = count > 1 ? parseInt(number).toLocaleString() + " (x" + count.toLocaleString() + ")" : parseInt(number).toLocaleString();
+                var numberElement = document.createElement("div");
+                numberElement.textContent = numberText;
+
+                if (parseInt(number) >= 1000000) {
+                    numberElement.classList.add("rainbow");
+                }
+
+                numberElement.addEventListener("click", function() {
+                    showBiggerUI(number);
+                });
+
+                var deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.className = "delete-button";
+                deleteButton.onclick = function() {
+                    if (rolledNumbers[number] > 1) {
+                        rolledNumbers[number]--;
+                    } else {
+                        delete rolledNumbers[number];
+                    }
+                    localStorage.setItem('rolledNumbers', JSON.stringify(rolledNumbers));
+                    updateHistory();
+                };
+
+                numberElement.appendChild(deleteButton);
+                historyElement.appendChild(numberElement);
+            });
+        }
+
+        function showBiggerUI(number) {
+            var biggerUI = document.querySelector(".bigger-ui");
+            var bigNumber = document.getElementById("bigNumber");
+            var bigDescription = document.getElementById("bigDescription");
+
+            biggerUI.style.display = "block";
+            bigNumber.textContent = parseInt(number).toLocaleString();
+
+            var description = getDescription(number);
+            bigDescription.textContent = description;
+
+            if (parseInt(number) >= 1000000) {
+                bigNumber.classList.add("rainbow");
+                bigDescription.classList.add("rainbow");
+            }
+        }
+
+        function getDescription(number) {
+            if (number >= 0 && number <= 999) {
+                return "Starter Numbers";
+            } else
+            if (number >= 0 && number <= 999) {
+                return "Starter Numbers";
+            } else if (number >= 1000 && number <= 100000) {
+                return "Not that bad!";
+            } else if (number >= 100001 && number <= 999999) {
+                return "Pretty lucky guy";
+            } else if (number >= 1000000 && number <= 10000000) {
+                return "Congrats, your officially cool";
+            } else {
+                return "Get a life";
+            }
+        }
+
+        function closeBiggerUI() {
+            var biggerUI = document.querySelector(".bigger-ui");
+            var bigNumber = document.getElementById("bigNumber");
+            var bigDescription = document.getElementById("bigDescription");
+
+            biggerUI.style.display = "none";
+            bigNumber.textContent = "";
+            bigDescription.textContent = "";
+            bigNumber.classList.remove("rainbow");
+            bigDescription.classList.remove("rainbow");
+        }
+
+        function playCutscene() {
+            var cutsceneElement = document.getElementById("cutscene");
+            var customImageElement = document.getElementById("customImage");
+
+            cutsceneElement.style.animation = "";
+            customImageElement.style.animation = "";
+
+            cutsceneElement.style.display = "block";
+            cutscenePlaying = true;
+            setTimeout(function() {
+                cutsceneElement.style.animation = "fadeOut 1s forwards";
+                customImageElement.style.animation = "scaleDown 1s forwards";
+            }, 5000);
+
+            setTimeout(function() {
+                cutsceneElement.style.display = "none";
+                cutscenePlaying = false;
+            }, 6000);
+        }
+
+ // Disable right-click context menu
+document.addEventListener('contextmenu', function(event) {
+    event.preventDefault();
+});
+
+// Disable keyboard shortcuts
+document.addEventListener('keydown', function(event) {
+    // Check for common console shortcut keys
+    if (event.ctrlKey && (event.key === 'c' || event.key === 'u' || event.key === 'i')) {
+        event.preventDefault();
+    }
+});
+
+// Override console.log to prevent logging from the console
+(function() {
+    var originalLog = console.log;
+    console.log = function() {
+        alert('Console logging is disabled!');
+    };
+})();
+
+
+    </script>
+</body>
+</html>
+
+
