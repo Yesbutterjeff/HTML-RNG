@@ -199,21 +199,77 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
     z-index: 999;
     display: none;
 }
+
+.bigger-ui-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Adjust the alpha value to change transparency */
+}
+
 
 .bigger-ui-content {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #fff;
+    background-color: rgba(0, 0, 0, 0.7);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border: 2px solid transparent; /* Ensure there's always a border */
 }
+
+.rainbow-outline {
+    border-image: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet);
+    border-image-slice: 1; /* Ensure the gradient fills the border */
+    border-radius: 10px; /* Smooth edges */
+}
+
+
+
+
+.big-number-container {
+    background-color: rgba(255, 255, 255, 0.3); /* Transparent white background */
+    padding: 20px;
+    border-radius: 20px; /* Smooth edges */
+    margin-bottom: 20px;
+    border: 2px solid #000000; /* White outline */
+}
+
+.big-number {
+    font-size: 48px;
+    margin: 0;
+    color: #fff; /* White color for the number */
+}
+
+.big-description {
+    font-size: 18px;
+    color: #fff;
+}
+
+.big-number.rainbow,
+.big-description.rainbow {
+    background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: rainbow 5s ease infinite;
+    color: transparent;
+}
+
+@keyframes rainbow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+
+
 
 </style>
 </head>
@@ -229,11 +285,17 @@
     </div>
 
     <div class="bigger-ui" onclick="closeBiggerUI()">
-        <div class="bigger-ui-content" id="biggerUIContent">
-            <h2 id="bigNumber"></h2>
-            <p id="bigDescription"></p>
+        <div class="bigger-ui-background"></div>
+        <div class="bigger-ui-content">
+            <div class="big-number-container">
+                <h2 id="bigNumber" class="big-number"></h2>
+            </div>
+            <p id="bigDescription" class="big-description"></p>
         </div>
     </div>
+    
+    
+    
 
     <script>
         var rolledNumbers = JSON.parse(localStorage.getItem('rolledNumbers')) || {};
@@ -346,22 +408,29 @@
             });
         }
 
-        function showBiggerUI(number) {
-            var biggerUI = document.querySelector(".bigger-ui");
-            var bigNumber = document.getElementById("bigNumber");
-            var bigDescription = document.getElementById("bigDescription");
+ function showBiggerUI(number) {
+    var biggerUI = document.querySelector(".bigger-ui");
+    var bigNumber = document.getElementById("bigNumber");
+    var bigDescription = document.getElementById("bigDescription");
+    var biggerUIContent = document.querySelector(".bigger-ui-content");
 
-            biggerUI.style.display = "block";
-            bigNumber.textContent = parseInt(number).toLocaleString();
+    biggerUI.style.display = "block";
+    bigNumber.textContent = parseInt(number).toLocaleString();
 
-            var description = getDescription(number);
-            bigDescription.textContent = description;
+    var description = getDescription(number);
+    bigDescription.textContent = description;
 
-            if (parseInt(number) >= 1000000) {
-                bigNumber.classList.add("rainbow");
-                bigDescription.classList.add("rainbow");
-            }
-        }
+    if (parseInt(number) >= 1000000) {
+        bigNumber.classList.add("rainbow");
+        bigDescription.classList.add("rainbow");
+        biggerUIContent.classList.add("rainbow-outline"); // Add rainbow outline class
+    } else {
+        bigNumber.classList.remove("rainbow");
+        bigDescription.classList.remove("rainbow");
+        biggerUIContent.classList.remove("rainbow-outline"); // Remove rainbow outline class
+    }
+}
+
 
         function getDescription(number) {
             if (number >= 0 && number <= 999) {
