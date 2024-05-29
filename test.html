@@ -163,35 +163,78 @@
         background-clip: text;
     }
 
-    /* Glitch effect */
-    @keyframes glitch {
-        0% { transform: translateX(0); }
-        5% { transform: translateX(3px) skew(0.5deg); }
-        10% { transform: translateX(-3px) skew(-0.5deg); }
-        15% { transform: translateX(2px) skew(1deg); }
-        20% { transform: translateX(-2px)
-            skew(-1deg); }
-    25% { transform: translateX(1px) skew(-0.5deg); }
-    30% { transform: translateX(-1px) skew(0.5deg); }
-    35% { transform: translateX(3px) skew(-1deg); }
-    40% { transform: translateX(-3px) skew(1deg); }
-    45% { transform: translateX(2px) skew(-0.5deg); }
-    50% { transform: translateX(-2px) skew(0.5deg); }
-    55% { transform: translateX(1px) skew(1deg); }
-    60% { transform: translateX(-1px) skew(-1deg); }
-    65% { transform: translateX(3px) skew(0.5deg); }
-    70% { transform: translateX(-3px) skew(-0.5deg); }
-    75% { transform: translateX(2px) skew(1deg); }
-    80% { transform: translateX(-2px) skew(-1deg); }
-    85% { transform: translateX(1px) skew(-0.5deg); }
-    90% { transform: translateX(-1px) skew(0.5deg); }
-    95% { transform: translateX(3px) skew(-1deg); }
-    100% { transform: translateX(-3px) skew(1deg); }
+    .glitch-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    z-index: 9999;
+    animation: fadeOut 6s forwards;
 }
 
-.glitch-effect {
-    animation: glitch 0.5s infinite;
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
 }
+
+.glitch-box {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background-color: transparent;
+    border-radius: 0;
+    animation: glitchMove 0.1s linear infinite, glitchColor 0.1s linear infinite;
+}
+
+.glitch-cutscene {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    z-index: 9999;
+}
+
+@keyframes glitchMove {
+    0% {
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(50%, 50%);
+    }
+    100% {
+        transform: translate(-50%, -50%);
+    }
+}
+
+@keyframes glitchColor {
+    0% {
+        background-color: #ff0000;
+    }
+    25% {
+        background-color: #ff8000;
+    }
+    50% {
+        background-color: #ffff00;
+    }
+    75% {
+        background-color: #80ff00;
+    }
+    100% {
+        background-color: #00ff00;
+    }
+}
+
+
+
+
+
+
+
 
 .bigger-ui {
     position: fixed;
@@ -343,6 +386,11 @@
     <div id="number" class="number"></div>
     <div id="rolls">Total Rolls: 0</div>
     <div id="history"></div>
+    <div id="glitchCutscene" class="glitch-cutscene">
+        <!-- Boxes will be dynamically added here -->
+    </div>
+    
+
 
     <div id="cutscene">
         <div id="customImage"></div>
@@ -409,12 +457,15 @@
                     localStorage.setItem('rolledNumbers', JSON.stringify(rolledNumbers));
                     updateHistory();
 
-                    if (tempNumber >= 1000000 && !cutscenePlaying) {
+                    if (tempNumber >= 1000000 && tempNumber < 1000000000 && !cutscenePlaying) {
                         playCutscene();
+    } else if (tempNumber === 1000000000 && !cutscenePlaying) {
+        play1BillionCutscene();
+    }
                     }
                 }
             }
-        }
+        
 
         function calculateNumber(probability, maxNumber) {
             var randomValue = Math.random();
@@ -576,6 +627,36 @@ document.addEventListener('keydown', function(event) {
         alert('Console logging is disabled!');
     };
 })();
+
+function play1BillionCutscene() {
+    var glitchCutscene = document.getElementById("glitchCutscene");
+    glitchCutscene.style.display = "block";
+
+    var colors = ["red", "orange", "yellow", "green", "cyan", "blue", "violet"];
+    var numBoxes = 35; // Adjust as needed
+
+    for (var i = 0; i < numBoxes; i++) {
+        var box = document.createElement("div");
+        box.classList.add("glitch-box");
+        box.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        box.style.left = Math.random() * 100 + "%";
+        box.style.top = Math.random() * 100 + "%";
+        glitchCutscene.appendChild(box);
+    }
+
+    setTimeout(function() {
+        glitchCutscene.style.animation = "fadeOut 1s forwards";
+        setTimeout(function() {
+            glitchCutscene.style.display = "none";
+            glitchCutscene.innerHTML = ""; // Clear the boxes
+        }, 1000);
+    }, 6000);
+}
+
+
+
+
+
 
 
     </script>
