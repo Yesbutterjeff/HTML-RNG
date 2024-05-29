@@ -218,12 +218,76 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.8); /* Adjust transparency */
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    border: 2px solid transparent; /* Ensure there's always a border */
+    border: 2px solid black;
 }
+
+
+.chromatic-aberration {
+    text-shadow:
+        -4px -4px 0 #ff0000,
+        4px -4px 0 #ff00ff,
+        -4px 4px 0 #00ffff,
+        4px 4px 0 #00ff00,
+        0px 0px 10px #ffff00; /* Adjust shadow colors and distance */
+    animation: moveAberration 5s linear infinite; /* Adjust animation duration */
+}
+
+@keyframes moveAberration {
+    0% {
+        text-shadow:
+            -4px -4px 0 #ff0000,
+            4px -4px 0 #ff00ff,
+            -4px 4px 0 #00ffff,cfvbdfgfgc
+            4px 4px 0 #00ff00,
+            0px 0px 10px #ffff00; /* Starting position */
+    }
+    100% {
+        text-shadow:
+            4px -4px 0 #ff0000,
+            -4px -4px 0 #ff00ff,
+            4px 4px 0 #00ffff,
+            -4px 4px 0 #00ff00,
+            0px 0px 10px #ffff00; /* Ending position */
+    }
+}
+
+.chromatic-aberration2 {
+    text-shadow:
+        -2px -2px 0 #ff0000,
+        2px -2px 0 #ff00ff,
+        -2px 2px 0 #00ffff,
+        2px 2px 0 #00ff00,
+        0px 0px 5px #ffff00; /* Adjust shadow colors */
+    animation: moveAberration 5s linear infinite; /* Adjust animation duration */
+}
+
+@keyframes moveAberration {
+    0% {
+        text-shadow:
+            -2px -2px 0 #ff0000,
+            2px -2px 0 #ff00ff,
+            -2px 2px 0 #00ffff,
+            2px 2px 0 #00ff00,
+            0px 0px 5px #ffff00; /* Starting position */
+    }
+    100% {
+        text-shadow:
+            2px -2px 0 #ff0000,
+            -2px -2px 0 #ff00ff,
+            2px 2px 0 #00ffff,
+            -2px 2px 0 #00ff00,
+            0px 0px 5px #ffff00; /* Ending position */
+    }
+}
+
+
+
+
+
 
 .rainbow-outline {
     border-image: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet);
@@ -386,6 +450,10 @@
                     numberElement.classList.add("rainbow");
                 }
 
+                if (parseInt(number) >= 1000000000) {
+                    numberElement.classList.add("chromatic-aberration2");
+                }
+
                 numberElement.addEventListener("click", function() {
                     showBiggerUI(number);
                 });
@@ -408,11 +476,10 @@
             });
         }
 
- function showBiggerUI(number) {
+        function showBiggerUI(number) {
     var biggerUI = document.querySelector(".bigger-ui");
     var bigNumber = document.getElementById("bigNumber");
     var bigDescription = document.getElementById("bigDescription");
-    var biggerUIContent = document.querySelector(".bigger-ui-content");
 
     biggerUI.style.display = "block";
     bigNumber.textContent = parseInt(number).toLocaleString();
@@ -423,13 +490,21 @@
     if (parseInt(number) >= 1000000) {
         bigNumber.classList.add("rainbow");
         bigDescription.classList.add("rainbow");
-        biggerUIContent.classList.add("rainbow-outline"); // Add rainbow outline class
-    } else {
-        bigNumber.classList.remove("rainbow");
-        bigDescription.classList.remove("rainbow");
-        biggerUIContent.classList.remove("rainbow-outline"); // Remove rainbow outline class
     }
+
+    if (parseInt(number) === 1000000000) {
+    bigNumber.classList.remove("rainbow"); // Remove rainbow class
+    bigNumber.classList.add("chromatic-aberration"); // Add chromatic aberration class
+    bigDescription.classList.add("chromatic-aberration2"); // Add chromatic aberration class
+} else {
+    bigNumber.classList.remove("chromatic-aberration"); // Remove chromatic aberration class for other numbers
+    bigDescription.classList.remove("chromatic-aberration2"); // Remove chromatic aberration class for other numbers
 }
+
+
+}
+
+
 
 
         function getDescription(number) {
